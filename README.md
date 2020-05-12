@@ -1,7 +1,34 @@
-# LeGO-LOAM-BOR
+# SC-LeGO-LOAM-BOR
 
-This is a fork of the original [LeGO-LOAM](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM).
+This is a fork of [LeGO-LOAM-BOR](https://github.com/facontidavide/LeGO-LOAM-BOR), that is itself a fork of the original [LeGO-LOAM](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM). The purpose of this new fork is to add the Scan Context loop detector implemented in [SC-LeGO-LOAM](https://github.com/irapkaist/SC-LeGO-LOAM). Hence, the advantages of SC-LeGO-LOAM (second loop closure detector) and LeGO-LOAM-BOR (determinism, computing effectiveness) are combined in a single package SC-LeGO-LOAM-BOR.
 
+# About SC-LeGO-LOAM
+
+## Real-time LiDAR SLAM: Scan Context (18 IROS) + LeGO-LOAM (18 IROS)
+- This repository is an example use-case of Scan Context C++ , the LiDAR place recognition method, for LiDAR SLAM applications.
+- For more details for each algorithm please refer to:
+    - Scan Context https://github.com/irapkaist/scancontext
+    - LeGO LOAM https://github.com/RobustFieldAutonomyLab/LeGO-LOAM
+- Just include Scancontext.h. For details see the file mapOptmization.cpp.
+- This example is integrated with LOAM, but our simple module (i.e., Scancontext.h) can be easily integrated with any other key-frame-based odometry (e.g., wheel odometry or ICP-based odometry).
+- Current version: April, 2020.
+
+## Features
+- Light-weight: a single header and cpp file named "Scancontext.h" and "Scancontext.cpp"
+	- Our module has KDtree and we used nanoflann. nanoflann is an also single-header-program 			and that file is in our directory.
+- Easy to use: A user just remembers and uses only two API functions: 	  makeAndSaveScancontextAndKeys and detectLoopClosureID.
+- Fast: The loop detector runs at 10-15Hz (for 20 x 60 size, 10 candidates)
+
+## Scan Context integration
+- For implementation details, see the mapOptmization.cpp; all other files are same as the original LeGO-LOAM.
+- Some detail comments
+     - We use non-conservative threshold for Scan Context's nearest distance, so expect to maximise true-positive loop factors, while the number of false-positive increases.
+     - To prevent the wrong map correction, we used Cauchy (but DCS can be used) kernel for loop factor. See mapOptmization.cpp for details. (the original LeGO-LOAM used non-robust kernel). We found that Cauchy is emprically enough.
+     - We use both two-type of loop factor additions (i.e., radius search (RS)-based as already implemented in the original LeGO-LOAM and Scan context (SC)-based global revisit detection). See mapOptmization.cpp for details. SC is good for correcting large drifts and RS is good for fine-stitching.
+     - Originally, Scan Context supports reverse-loop closure (i.e., revisit a place in a reversed direction) and examples in here (py-icp slam) . Our Scancontext.cpp module contains this feature. However, we did not use this for closing a loop in this repository because we found PCL's ICP with non-eye initial is brittle.
+
+
+# About LeGO-LOAM-BOR
 This is a "friendly fork", in other words, we will be happy to work with the original authors to merge
 these improvements with the original LeGO-LOAM... if they want to!
 
@@ -54,7 +81,7 @@ You can use the following commands to download and compile the package.
 
 ```
 cd ~/catkin_ws/src
-git clone https://github.com/facontidavide/LeGO-LOAM-BOR.git
+git clone https://github.com/robot54/SC-LeGO-LOAM-BOR.git
 cd ..
 catkin_make
 ```
@@ -115,9 +142,21 @@ The VLP-16 rotation rate is set to 10Hz. This data-set features over 20K scans a
     <img src="/LeGO-LOAM/launch/google-earth.png" alt="drawing" width="600"/>  
 </p>
 
-## Cite *LeGO-LOAM*
+## Cite *SC-LeGO-LOAM-BOR*
+```
+@INPROCEEDINGS { gkim-2018-iros,
+  author = {Kim, Giseop and Kim, Ayoung},
+  title = { Scan Context: Egocentric Spatial Descriptor for Place Recognition within {3D} Point Cloud Map },
+  booktitle = { Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems },
+  year = { 2018 },
+  month = { Oct. },
+  address = { Madrid }
+}
 
-Thank you for citing our *LeGO-LOAM* paper if you use any of this code: 
+```
+
+and
+
 ```
 @inproceedings{legoloam2018,
   title={LeGO-LOAM: Lightweight and Ground-Optimized Lidar Odometry and Mapping on Variable Terrain},
