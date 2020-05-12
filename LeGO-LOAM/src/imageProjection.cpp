@@ -446,10 +446,12 @@ void ImageProjection::publishClouds() {
   ProjectionOut out;
   out.outlier_cloud.reset(new pcl::PointCloud<PointType>());
   out.segmented_cloud.reset(new pcl::PointCloud<PointType>());
+   out.cloud_raw.reset(new pcl::PointCloud<PointType>()); // robot54: needed for Scan Context loop detector.
 
   std::swap( out.seg_msg, _seg_msg);
   std::swap(out.outlier_cloud, _outlier_cloud);
   std::swap(out.segmented_cloud, _segmented_cloud);
+  std::swap(out.cloud_raw, _laser_cloud_in); // robot54: needed for Scan Context loop detector.
 
   _output_channel.send( std::move(out) );
 
