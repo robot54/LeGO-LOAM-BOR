@@ -5,6 +5,8 @@
 #include "lego_loam/channel.h"
 #include "lego_loam/nanoflann_pcl.h"
 
+#include "lego_loam/Scancontext.h" // robot54: needed for Scan Context loop detector.
+
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/geometry/Rot3.h>
 #include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
@@ -14,6 +16,7 @@
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/PriorFactor.h>
 #include <gtsam/nonlinear/ISAM2.h>
+
 
 inline gtsam::Pose3 pclPointTogtsamPose3(PointTypePose thisPoint) {
   // camera frame to lidar frame
@@ -91,7 +94,7 @@ class MapOptimization {
   std::deque<pcl::PointCloud<PointType>::Ptr> recentOutlierCloudKeyFrames;
   int latestFrameID;
 
-  std::vector<int> surroundingExistingKeyPosesID;
+  std::vector<int> surroundingExistingKeyPosesID; 
   std::deque<pcl::PointCloud<PointType>::Ptr> surroundingCornerCloudKeyFrames;
   std::deque<pcl::PointCloud<PointType>::Ptr> surroundingSurfCloudKeyFrames;
   std::deque<pcl::PointCloud<PointType>::Ptr> surroundingOutlierCloudKeyFrames;
@@ -105,6 +108,9 @@ class MapOptimization {
   pcl::PointCloud<PointType>::Ptr surroundingKeyPoses;
   pcl::PointCloud<PointType>::Ptr surroundingKeyPosesDS;
 
+
+  pcl::PointCloud<PointType>::Ptr laserCloudRaw; // robot54: needed for Scan Context loop detector.
+  pcl::PointCloud<PointType>::Ptr laserCloudRawDS;  // robot54: needed for Scan Context loop detector.
   pcl::PointCloud<PointType>::Ptr
       laserCloudCornerLast;  // corner feature set from odoOptimization
   pcl::PointCloud<PointType>::Ptr
@@ -141,13 +147,17 @@ class MapOptimization {
   nanoflann::KdTreeFLANN<PointType> kdtreeSurroundingKeyPoses;
   nanoflann::KdTreeFLANN<PointType> kdtreeHistoryKeyPoses;
 
+  pcl::PointCloud<PointType>::Ptr RSlatestSurfKeyFrameCloud; // robot54: RS = radius-search.
+  pcl::PointCloud<PointType>::Ptr RSnearHistorySurfKeyFrameCloud; // robot54: RS = radius-search.
+  pcl::PointCloud<PointType>::Ptr RSnearHistorySurfKeyFrameCloudDS; // robot54: RS = radius-search.
+
   pcl::PointCloud<PointType>::Ptr nearHistoryCornerKeyFrameCloud;
   pcl::PointCloud<PointType>::Ptr nearHistoryCornerKeyFrameCloudDS;
-  pcl::PointCloud<PointType>::Ptr nearHistorySurfKeyFrameCloud;
-  pcl::PointCloud<PointType>::Ptr nearHistorySurfKeyFrameCloudDS;
+  pcl::PointCloud<PointType>::Ptr SCnearHistorySurfKeyFrameCloud; // robot54: SC = Scan Context.
+  pcl::PointCloud<PointType>::Ptr SCnearHistorySurfKeyFrameCloudDS; // robot54: SC = Scan Context.
 
   pcl::PointCloud<PointType>::Ptr latestCornerKeyFrameCloud;
-  pcl::PointCloud<PointType>::Ptr latestSurfKeyFrameCloud;
+  pcl::PointCloud<PointType>::Ptr SClatestSurfKeyFrameCloud; // robot54: SC = Scan Context.
   pcl::PointCloud<PointType>::Ptr latestSurfKeyFrameCloudDS;
 
   nanoflann::KdTreeFLANN<PointType> kdtreeGlobalMap;
@@ -159,6 +169,7 @@ class MapOptimization {
   std::vector<int> pointSearchInd;
   std::vector<float> pointSearchSqDis;
 
+  pcl::VoxelGrid<PointType> downSizeFilterScancontext; // robot54: needed for Scan Context.
   pcl::VoxelGrid<PointType> downSizeFilterCorner;
   pcl::VoxelGrid<PointType> downSizeFilterSurf;
   pcl::VoxelGrid<PointType> downSizeFilterOutlier;
@@ -172,8 +183,16 @@ class MapOptimization {
   pcl::VoxelGrid<PointType>
       downSizeFilterGlobalMapKeyFrames;  // for global map visualization
 
+  double timeLaserCloudCornerLast;
+  double timeLaserCloudSurfLast;
   double timeLaserOdometry;
+  double timeLaserCloudOutlierLast;
   double timeLastGloalMapPublish;
+
+  bool newLaserCloudCornerLast;
+  bool newLaserCloudSurfLast;
+  bool newLaserOdometry;
+  bool newLaserCloudOutlierLast;
 
   float transformLast[6];
   float transformSum[6];
@@ -181,7 +200,6 @@ class MapOptimization {
   float transformTobeMapped[6];
   float transformBefMapped[6];
   float transformAftMapped[6];
-
 
   std::mutex mtx;
 
@@ -210,13 +228,17 @@ class MapOptimization {
 
   bool potentialLoopFlag;
   double timeSaveFirstCurrentScanForLoopClosure;
-  int closestHistoryFrameID;
+  int RSclosestHistoryFrameID; // robot54: RS = radius-search.
+  int SCclosestHistoryFrameID; // robot54: SC = Scan Context.
   int latestFrameIDLoopCloure;
+  float yawDiffRad; // // robot54: needed for Scan Context.
 
   bool aLoopIsClosed;
 
   float cRoll, sRoll, cPitch, sPitch, cYaw, sYaw, tX, tY, tZ;
   float ctRoll, stRoll, ctPitch, stPitch, ctYaw, stYaw, tInX, tInY, tInZ;
+
+  SCManager scManager;  // robot54: needed for Scan Context.
 
  private:
   void allocateMemory();
