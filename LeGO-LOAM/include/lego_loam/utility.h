@@ -47,7 +47,6 @@ typedef Eigen::Vector3f Vector3;
 
 const double DEG_TO_RAD = M_PI / 180.0;
 
-
 struct smoothness_t{ 
     float value;
     size_t ind;
@@ -64,6 +63,7 @@ struct ProjectionOut
   pcl::PointCloud<PointType>::Ptr segmented_cloud;
   pcl::PointCloud<PointType>::Ptr outlier_cloud;
   cloud_msgs::cloud_info seg_msg;
+  pcl::PointCloud<PointType>::Ptr cloud_raw; // robot54: needed for Scan Context loop detector.
 };
 
 
@@ -73,6 +73,7 @@ struct AssociationOut
   pcl::PointCloud<PointType>::Ptr cloud_corner_last;
   pcl::PointCloud<PointType>::Ptr cloud_surf_last;
   nav_msgs::Odometry laser_odometry;
+  pcl::PointCloud<PointType>::Ptr laser_cloud_raw; // robot54: needed for Scan Context detector.
 };
 
 struct RollPitchYaw{
