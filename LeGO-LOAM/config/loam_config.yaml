@@ -1,19 +1,30 @@
 lego_loam:
 
-    # VLP-16
+    # Sensor VLP-16 (velodyne)
+#    laser:
+#        num_vertical_scans: 16
+#        num_horizontal_scans: 1800
+#        ground_scan_index: 7
+#        vertical_angle_bottom: -15          # degrees
+#        vertical_angle_top: 15              # degrees
+#        sensor_mount_angle: 0               # degrees
+#        scan_period: 0.1                    # seconds
+
+
+    # Sensor HDL-32E (velodyne)
     laser:
-        num_vertical_scans: 16
+        num_vertical_scans: 32
         num_horizontal_scans: 1800
-        ground_scan_index: 7
-        vertical_angle_bottom: -15          # degrees
-        vertical_angle_top: 15              # degrees
+        ground_scan_index: 20
+        vertical_angle_bottom: -30.67       # degrees
+        vertical_angle_top: 10.67           # degrees
         sensor_mount_angle: 0               # degrees
         scan_period: 0.1                    # seconds
 
     imageProjection:
         segment_valid_point_num: 5
         segment_valid_line_num: 3
-        segment_theta: 60.0                      # decrese this value may improve accuracy
+        segment_theta: 60.0/180.0*M_PI             # decrese this value may improve accuracy (60.0 originally, but in 60.0/180.0*M_PI in LeGO-LOAM)
 
     featureAssociation:
         edge_threshold: 0.1
@@ -21,7 +32,7 @@ lego_loam:
         nearest_feature_search_distance: 5
 
     mapping:
-        enable_loop_closure: false
+        enable_loop_closure: true
         mapping_frequency_divider: 5
 
         surrounding_keyframe_search_radius: 50.0   # key frame that is within n meters from current pose will be
