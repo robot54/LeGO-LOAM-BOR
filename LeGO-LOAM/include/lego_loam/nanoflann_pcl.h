@@ -44,7 +44,7 @@
 #include <boost/shared_ptr.hpp>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include "nanoflann.hpp"
+#include "nanoflann.h"
 
 namespace nanoflann
 {
