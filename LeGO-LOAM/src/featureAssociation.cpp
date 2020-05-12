@@ -96,6 +96,7 @@ void FeatureAssociation::initializationValue() {
 
   segmentedCloud.reset(new pcl::PointCloud<PointType>());
   outlierCloud.reset(new pcl::PointCloud<PointType>());
+  RawCloud.reset(new pcl::PointCloud<PointType>()); // robot54: needed for Scan Context loop detector.
 
   cornerPointsSharp.reset(new pcl::PointCloud<PointType>());
   cornerPointsLessSharp.reset(new pcl::PointCloud<PointType>());
@@ -1282,6 +1283,7 @@ void FeatureAssociation::runFeatureAssociation() {
     //--------------
     outlierCloud = projection.outlier_cloud;
     segmentedCloud = projection.segmented_cloud;
+    RawCloud = projection.cloud_raw; // robot54: needed for Scan Context loop detector.
     segInfo = std::move(projection.seg_msg);
 
     cloudHeader = segInfo.header;
@@ -1321,10 +1323,12 @@ void FeatureAssociation::runFeatureAssociation() {
       out.cloud_corner_last.reset(new pcl::PointCloud<PointType>());
       out.cloud_surf_last.reset(new pcl::PointCloud<PointType>());
       out.cloud_outlier_last.reset(new pcl::PointCloud<PointType>());
+      out.laser_cloud_raw.reset(new pcl::PointCloud<PointType>()); // robot54: needed for Scan Context loop detector.
 
       *out.cloud_corner_last = *laserCloudCornerLast;
       *out.cloud_surf_last = *laserCloudSurfLast;
       *out.cloud_outlier_last = *outlierCloud;
+      *out.laser_cloud_raw = *RawCloud; // robot54: needed for Scan Context loop detector.
 
       out.laser_odometry = laserOdometry;
 
