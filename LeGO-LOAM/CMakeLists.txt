@@ -51,7 +51,7 @@ link_directories(
 )
 
 
-add_executable(lego_loam_bor
+add_executable(sc_lego_loam_bor
     src/imageProjection.cpp
     src/featureAssociation.cpp
     src/mapOptmization.cpp
