@@ -1,15 +1,17 @@
 <?xml version="1.0"?>
 <package>
-  <name>lego_loam_bor</name>
+  <name>sc_lego_loam_bor</name>
   <version>1.0.0</version>
-  <description>Fork of LeGO-LOAM</description>
+  <description>Fork of LeGO-LOAM-BOR with added Scan Context loop detector</description>
 
-  <maintainer email="davide.faconti@gmail.com">Davide Faconti</maintainer>
+  <maintainer email="baptval@live.com">Baptiste Valentin</maintainer>
 
   <license>BSD</license>
 
   <author >Tixiao Shan</author>
   <author >Davide Faconti</author>
+  <author >Giseop Kim</author>
+  <author >Baptiste Valentin</author> 
 
   <buildtool_depend>catkin</buildtool_depend>
 
