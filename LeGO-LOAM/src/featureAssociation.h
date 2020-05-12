@@ -42,6 +42,7 @@ class FeatureAssociation {
 
   pcl::PointCloud<PointType>::Ptr segmentedCloud;
   pcl::PointCloud<PointType>::Ptr outlierCloud;
+  pcl::PointCloud<PointType>::Ptr RawCloud; // robot54: needed for Scan Context loop detector.
 
   pcl::PointCloud<PointType>::Ptr cornerPointsSharp;
   pcl::PointCloud<PointType>::Ptr cornerPointsLessSharp;
