@@ -786,7 +786,7 @@ void MapOptimization::performLoopClosure( void ) {
           gtsam::Vector Vector6(6);
 
           std::lock_guard<std::mutex> lock(mtx);
-          gtSAMgraph.add(BetweenFactor<Pose3>(latestFrameIDLoopCloure, RSclosestHistoryFrameID, poseFrom.between(poseTo), robustNoiseModel));
+          gtSAMgraph.add(BetweenFactor<Pose3>(latestFrameIDLoopCloure, RSclosestHistoryFrameID, poseFrom.between(poseTo), constraintNoise));
           isam->update(gtSAMgraph);
           isam->update();
           gtSAMgraph.resize(0);
