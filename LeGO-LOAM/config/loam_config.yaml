@@ -24,7 +24,7 @@ lego_loam:
     imageProjection:
         segment_valid_point_num: 5
         segment_valid_line_num: 3
-        segment_theta: 60.0/180.0*M_PI             # decrese this value may improve accuracy (60.0 originally, but in 60.0/180.0*M_PI in LeGO-LOAM)
+        segment_theta: 60.0             # decrese this value may improve accuracy 
 
     featureAssociation:
         edge_threshold: 0.1
