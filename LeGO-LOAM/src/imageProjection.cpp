@@ -26,6 +26,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#define NDEBUG // robot54: needed for speed
 #include <boost/circular_buffer.hpp>
 #include "imageProjection.h"
 
